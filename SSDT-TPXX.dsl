@@ -14,7 +14,7 @@ DefinitionBlock ("", "SSDT", 2, "CLEMAX", "I2C-TPXX", 0) {
         If (_OSI ("Darwin"))
         {
             // Disable other pointing devices on macOS
-            \_SB.PTPS = 0
+            \_SB.PTPS = Zero
         }
     }
 
