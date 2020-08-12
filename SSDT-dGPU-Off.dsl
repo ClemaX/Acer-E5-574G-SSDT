@@ -3,7 +3,7 @@
 */
 DefinitionBlock("", "SSDT", 2, "DRTNIA", "dGPU-Off", 0)
 {
-External(_SB.PCI0.PEG0.PEGP._OFF, MethodObj) // ACPI Path of dGPU
+External(_SB_.PCI0.RP01.PXSX._OFF, MethodObj) // ACPI Path of dGPU
 
     Device(RMD1)
     {
@@ -25,7 +25,7 @@ External(_SB.PCI0.PEG0.PEGP._OFF, MethodObj) // ACPI Path of dGPU
             If (_OSI ("Darwin"))
             {
                // disable discrete graphics (Nvidia/Radeon) if it is present
-               If (CondRefOf(\_SB.PCI0.PEG0.PEGP._OFF)) { \_SB.PCI0.PEG0.PEGP._OFF() }
+               If (CondRefOf(\_SB_.PCI0.RP01.PXSX._OFF)) { \_SB_.PCI0.RP01.PXSX._OFF() }
             }
             Else
             {
