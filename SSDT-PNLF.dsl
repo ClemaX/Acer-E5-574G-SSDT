@@ -26,14 +26,12 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
     External(RMCF.FBTP, IntObj)
 
     External(_SB.PCI0.GFX0, DeviceObj)
+
     Scope(_SB.PCI0.GFX0)
-    {
-        OperationRegion(RMP3, PCI_Config, 0, 0x14)
-    }
+    { OperationRegion(RMP3, PCI_Config, 0, 0x14) }
 
     // For backlight control
-    Device(_SB.PCI0.GFX0.PNLF)
-    {
+    Device(_SB.PCI0.GFX0.PNLF) {
         Name(_HID, EisaId("APP0002"))
         Name(_CID, "backlight")
         // _UID is set depending on PWMMax to match profiles in WhateverGreen.kext Info.plist
@@ -47,8 +45,7 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
         Name(_UID, 0)
         Name(_STA, 0x0B)
 
-        Field(^RMP3, AnyAcc, NoLock, Preserve)
-        {
+        Field(^RMP3, AnyAcc, NoLock, Preserve) {
             Offset(0x02), GDID,16,
             Offset(0x10), BAR1,32,
         }
@@ -63,8 +60,7 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
         //   LEVD level of backlight for Coffeelake
         //   PCHL not currently used
         OperationRegion(RMB1, SystemMemory, BAR1 & ~0xF, 0xe1184)
-        Field(RMB1, AnyAcc, Lock, Preserve)
-        {
+        Field(RMB1, AnyAcc, Lock, Preserve) {
             Offset(0x48250),
             LEV2, 32,
             LEVL, 32,
@@ -80,8 +76,7 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
             PCHL, 32,
         }
 
-        Method(_INI)
-        {
+        Method(_INI) {
             // IntelBacklight.kext takes care of this at load time...
             // If RMCF.BKLT does not exist, it is assumed you want to use AppleBacklight.kext...
             Local4 = 1
@@ -99,14 +94,11 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
             //   Local0 is device-id for IGPU
             //   Local2 is LMAX, if specified (Ones means based on device-id)
 
-            // must be Haswell/Broadwell/Skylake/KabyLake/KabyLake-R (FBTYPE_HSWPLUS)
-			if (Ones == Local2)
-			{
-				// assume Skylake/KabyLake/KabyLake-R, both 0x56c
-				// 0x1916, 0x191E, 0x1926, 0x1927, 0x1912, 0x1932, 0x1902, 0x1917, 0x191b,
-				// 0x5916, 0x5912, 0x591b, others...
-				Local2 = SKYLAKE_PWMMAX
-			}
+            // assume Skylake/KabyLake/KabyLake-R, both 0x56c
+            // 0x1916, 0x191E, 0x1926, 0x1927, 0x1912, 0x1932, 0x1902, 0x1917, 0x191b,
+            // 0x5916, 0x5912, 0x591b, others...
+            
+            If (Ones == Local2) { Local2 = SKYLAKE_PWMMAX }
 
 			// INTEL OPEN SOURCE HD GRAPHICS, INTEL IRIS GRAPHICS, AND INTEL IRIS PRO GRAPHICS PROGRAMMER'S REFERENCE MANUAL (PRM)
             // FOR THE 2015-2016 INTEL CORE PROCESSORS, CELERON PROCESSORS AND PENTIUM PROCESSORS BASED ON THE "SKYLAKE" PLATFORM
@@ -120,16 +112,14 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
             //   4. Change duty cycle as needed in SBLC_PWM_CTL2 Backlight Duty Cycle.
             // This 0xC value comes from looking what OS X initializes this
             // register to after display sleep (using ACPIDebug/ACPIPoller)
-            If (0 == (2 & Local4))
-            {
+            If (0 == (2 & Local4)) {
                 Local5 = 0xC0000000
                 If (CondRefOf(\RMCF.LEVW)) { If (Ones != \RMCF.LEVW) { Local5 = \RMCF.LEVW } }
                 ^LEVW = Local5
             }
 
             // from step 2 above (you may need 1 instead)
-            If (4 & Local4)
-            {
+            If (4 & Local4) {
                 If (CondRefOf(\RMCF.GRAN)) { ^GRAN = \RMCF.GRAN }
                 Else { ^GRAN = 0 }
             }
@@ -137,8 +127,7 @@ DefinitionBlock("", "SSDT", 2, "ACDT", "PNLF", 0)
 			// change/scale only if different than current...
 			Local1 = ^LEVX >> 16
 			If (!Local1) { Local1 = Local2 }
-			If (!(8 & Local4) && Local2 != Local1)
-			{
+			If (!(8 & Local4) && Local2 != Local1) {
 				// set new backlight PWMAX but retain current backlight level by scaling
 				Local0 = (((^LEVX & 0xFFFF) * Local2) / Local1) | (Local2 << 16)
 				//REVIEW: wait for vblank before setting new PWM config
