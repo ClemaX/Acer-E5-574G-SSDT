@@ -15,8 +15,7 @@ DefinitionBlock ("", "SSDT", 2, "CLEMAX", "I2C0", 0) {
     External(FMLI, FieldUnitObj)
     External(FMDI, FieldUnitObj)
 
-    If (_OSI ("Darwin"))
-    {
+    If (_OSI ("Darwin")) {
         Scope(_SB.PCI0.I2C0) {
             Method (_PSC, 0, NotSerialized)  // _PSC: Power State Current
             {
