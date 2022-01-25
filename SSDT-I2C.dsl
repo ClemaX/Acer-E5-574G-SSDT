@@ -18,29 +18,19 @@ DefinitionBlock ("", "SSDT", 2, "CLEMAX", "I2C0", 0) {
     If (_OSI ("Darwin")) {
         Scope(_SB.PCI0.I2C0) {
             Method (_PSC, 0, NotSerialized)  // _PSC: Power State Current
-            {
-                Return (GETD (SB10))
-            }
+            { Return (GETD (SB10)) }
 
             Method (_PS0, 0, NotSerialized)  // _PS0: Power State 0
-            {
-                LPD0 (SB10)
-            }
+            { LPD0 (SB10) }
 
             Method (_PS3, 0, NotSerialized)  // _PS3: Power State 3
-            {
-                LPD3 (SB10)
-            }
+            { LPD3 (SB10) }
 
             Method (SSCN, 0, NotSerialized)  // SSCN: Standard mode Clock Speed
-            {
-                Return (PKG3 (SSHI, SSLI, SSDI))
-            }
+            { Return (PKG3 (SSHI, SSLI, SSDI)) }
 
             Method (FMCN, 0, NotSerialized)  // FMCN: Fast mode Clock Speed
-            {
-                Return (PKG3 (FMHI, FMLI, FMDI))
-            }
+            { Return (PKG3 (FMHI, FMLI, FMDI)) }
         }
     }
 }
